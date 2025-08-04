@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Image, TouchableHighlight, ScrollView, Activity
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {Button, Icon, Input}  from 'react-native-elements';
 import {useNavigation} from '@react-navigation/native'
+import CountryPicker from 'react-native-country-picker-modal';
 
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword} from "firebase/auth";
@@ -15,6 +16,8 @@ export default function SignupScreen() {
     const [name, setName] = useState("");
     const [identification, setIdentification] = useState("");
     const [nacionality, setNacionality] = useState("");
+    const [country, setCountry] = useState(null);
+    const [countryCode, setCountryCode] = useState("CO");
     const [number, setNumber] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -121,15 +124,6 @@ export default function SignupScreen() {
 
                         <Input
                             style={styles.input}
-                            placeholder="Nacionalidad"                           
-                            placeholderTextColor="#666"
-                            value={nacionality}
-                            onChangeText={setNacionality}
-                            autoCapitalize="words"
-                        />   
-
-                        <Input
-                            style={styles.input}
                             placeholder="Correo Electrónico"
                             placeholderTextColor="#666"
                             value={email}
@@ -137,6 +131,31 @@ export default function SignupScreen() {
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />   
+
+                        <CountryPicker
+                            withFilter
+                            withFlag                           
+                            withCallingCode
+                            withAlphaFilter
+                            countryCode={countryCode}
+                            onSelect={(selectedCountry) => {
+                                setCountryCode(selectedCountry.cca2);
+                                setCountry(selectedCountry);
+                                setNacionality(selectedCountry.name);
+                                setNumber(`+${selectedCountry.callingCode[0]} `);
+                            }}
+                        />
+                        <Input
+                            style={styles.input}
+                            placeholder="Nacionalidad"                           
+                            placeholderTextColor="#666"
+                            value={nacionality}
+                            onChangeText={setNacionality}
+                            autoCapitalize="words"
+                            editable={false}
+                            
+                        /> 
+                        
 
                         <Input
                             style={styles.input}
@@ -281,5 +300,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
         color: '#666',
         
+    },
+    selectedCountry: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
     }
 });
